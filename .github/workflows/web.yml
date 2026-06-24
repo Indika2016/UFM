@@ -4,16 +4,23 @@ on:
   push:
     branches: [ main ]
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -23,7 +30,6 @@ jobs:
       - name: Install Pygbag and Build Web Assets
         run: |
           pip install pygbag
-          # Compiles main.py straight into web elements
           python -m pygbag --build .
 
       - name: Upload Artifacts
@@ -40,4 +46,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: deploy-pages@v4
+        uses: actions/deploy-pages@v4  # <-- Fixed: Added the missing 'actions/' prefix
